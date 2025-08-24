@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventX - Offline</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .offline-container {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px 20px;
+        }
+
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .offline-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .offline-subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .offline-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .offline-tips {
+            margin-top: 40px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .offline-tips h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .offline-tips ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .offline-tips li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .offline-tips .material-icons {
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: 20px;
+            }
+
+            .offline-title {
+                font-size: 28px;
+            }
+
+            .offline-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📱</div>
+        <h1 class="offline-title">You're Offline</h1>
+        <p class="offline-subtitle">
+            No internet connection detected. Some features may not be available, but you can still view your cached bookings and tickets.
+        </p>
+
+        <div class="offline-actions">
+            <button class="btn btn-primary" onclick="checkConnection()">
+                <span class="material-icons">refresh</span>
+                Try Again
+            </button>
+            <a href="/" class="btn btn-secondary">
+                <span class="material-icons">home</span>
+                Go to Home
+            </a>
+        </div>
+
+        <div class="offline-tips">
+            <h3>
+                <span class="material-icons">lightbulb</span>
+                While Offline You Can:
+            </h3>
+            <ul>
+                <li>
+                    <span class="material-icons">confirmation_number</span>
+                    View cached booking tickets
+                </li>
+                <li>
+                    <span class="material-icons">schedule</span>
+                    Check booking countdown timers
+                </li>
+                <li>
+                    <span class="material-icons">account_circle</span>
+                    Access your profile information
+                </li>
+                <li>
+                    <span class="material-icons">share</span>
+                    Share booking details
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function checkConnection() {
+            const button = document.querySelector('.btn-primary');
+            button.disabled = true;
+            button.innerHTML = '<span class="material-icons">hourglass_empty</span>Checking...';
+
+            try {
+                const response = await fetch('/', { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                });
+
+                if (response.ok) {
+                    button.innerHTML = '<span class="material-icons">check</span>Connected!';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    throw new Error('Connection failed');
+                }
+            } catch (error) {
+                button.innerHTML = '<span class="material-icons">error</span>Still Offline';
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = '<span class="material-icons">refresh</span>Try Again';
+                }, 2000);
+            }
+        }
+
+        // Auto-check connection every 30 seconds
+        setInterval(async () => {
+            try {
+                const response = await fetch('/', { method: 'HEAD', cache: 'no-cache' });
+                if (response.ok) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                // Still offline
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

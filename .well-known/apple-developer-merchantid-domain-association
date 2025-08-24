@@ -1,0 +1,9 @@
+{
+  "domainName": "eventx.nu",
+  "merchantIdentifier": "merchant.com.eventx.booking",
+  "certificateChain": [
+    "-----BEGIN CERTIFICATE-----",
+    "YOUR_APPLE_PAY_CERTIFICATE_CHAIN_HERE",
+    "-----END CERTIFICATE-----"
+  ]
+}

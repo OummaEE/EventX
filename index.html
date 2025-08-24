@@ -1,604 +1,455 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EventX - Escape Room Booking</title>
+    <title>EventX - Advanced PWA</title>
+    <meta name="description" content="EventX Advanced PWA - Book escape rooms with push notifications, Apple Pay, and offline support">
 
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#FF6B35">
-    <meta name="background-color" content="#1A1A1A">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="EventX">
+    <meta name="mobile-web-app-capable" content="yes">
 
-    <!-- Material Icons -->
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#3b82f6">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/styles.css">
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
-            color: #FFFFFF;
-            overflow-x: hidden;
-            padding-bottom: 70px;
-        }
-
-        /* App Header */
-        .app-header {
-            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-            padding: 20px 20px 15px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 20px rgba(255, 107, 53, 0.3);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .app-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-        }
-
-        #user-status {
-            display: flex;
-            align-items: center;
-        }
-
-        .login-btn, .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .login-btn:hover, .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: calc(100vh - 140px);
-        }
-
-        /* Tabs Content */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Service Cards */
-        .service-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .service-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
-        }
-
-        .service-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .service-name {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FF6B35;
-        }
-
-        .service-price {
-            font-size: 18px;
-            font-weight: 500;
-            color: #4CAF50;
-        }
-
-        .service-description {
-            color: #CCCCCC;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .service-details {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #999;
-        }
-
-        /* Booking Section */
-        .booking-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .booking-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-size: 14px;
-            color: #CCCCCC;
-            margin-bottom: 5px;
-        }
-
-        .form-input, .form-select {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 12px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #FF6B35;
-            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
-        }
-
-        .book-btn {
-            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .book-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #999;
-        }
-
-        .nav-item.active {
-            color: #FF6B35;
-        }
-
-        .nav-item .material-icons {
-            font-size: 24px;
-            margin-bottom: 2px;
-        }
-
-        .nav-item span {
-            font-size: 12px;
-        }
-
-        /* User Bookings */
-        .booking-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .booking-status {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-confirmed {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .status-upcoming {
-            background: #FF9800;
-            color: white;
-        }
-
-        .status-completed {
-            background: #666;
-            color: white;
-        }
-
-        .countdown {
-            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        /* News Cards */
-        .news-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .news-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
-        }
-
-        .news-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #FF6B35;
-            margin-bottom: 8px;
-        }
-
-        .news-date {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 10px;
-        }
-
-        .news-summary {
-            color: #CCCCCC;
-            line-height: 1.5;
-        }
-
-        /* Photo Gallery */
-        .photo-event {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .event-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #FF6B35;
-            margin-bottom: 10px;
-        }
-
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .photo-item {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .photo-item:hover {
-            transform: scale(1.05);
-        }
-
-        .photo-placeholder {
-            color: #666;
-            font-size: 12px;
-            text-align: center;
-        }
-
-        /* Login Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #2D2D2D 0%, #1A1A1A 100%);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 350px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #FF6B35;
-            margin-bottom: 5px;
-        }
-
-        .modal-subtitle {
-            color: #CCCCCC;
-            font-size: 14px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        /* Notifications */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            z-index: 1001;
-            animation: slideInRight 0.3s ease;
-        }
-
-        .notification.error {
-            background: #f44336;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-
-        .empty-state .material-icons {
-            font-size: 64px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .main-content {
-                padding: 15px;
-            }
-
-            .service-card, .booking-card, .news-card {
-                padding: 15px;
-            }
-        }
-    </style>
+    <!-- Apple Pay Domain Validation -->
+    <meta name="apple-pay-domain-validation" content="merchant.com.eventx.booking">
 </head>
 <body>
-    <!-- App Header -->
-    <header class="app-header">
+    <!-- PWA Header -->
+    <header class="pwa-header">
         <div class="header-content">
-            <h1 class="app-title">EventX</h1>
-            <div id="user-status">
-                <button onclick="showLoginForm()" class="login-btn">Logga in</button>
+            <div class="logo">EventX</div>
+            <div class="header-actions">
+                <button class="install-button" id="installButton">
+                    <span class="material-icons">get_app</span>
+                    Install App
+                </button>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span id="userEmail"></span>
+                    <button class="btn-outline" onclick="logout()" style="padding: 8px 16px; font-size: 0.75rem;">
+                        <span class="material-icons" style="font-size: 16px;">logout</span>
+                        Logout
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <span class="material-icons" style="font-size: 16px;">cloud_off</span>
+        You're offline
+    </div>
+
     <!-- Main Content -->
-    <main class="main-content">
+    <main>
         <!-- Home Tab -->
-        <div id="home-tab" class="tab-content active">
-            <div class="service-card" onclick="selectService('QuestBox')">
-                <div class="service-header">
-                    <div class="service-name">QuestBox</div>
-                    <div class="service-price">från 345 kr</div>
-                </div>
-                <div class="service-description">
-                    Mobilt escape room för 4-8 personer. Lös mysterier och gåtor i en immersiv upplevelse.
-                </div>
-                <div class="service-details">
-                    <span>⏱️ 60 minuter</span>
-                    <span>👥 4-8 personer</span>
-                    <span>⭐ 3/5 svårighet</span>
+        <div id="homeTab" class="tab-content active">
+            <div class="hero-section">
+                <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; text-align: center;">
+                    Welcome to EventX
+                </h1>
+                <p style="font-size: 1.125rem; color: var(--text-secondary); text-align: center; margin-bottom: 2rem;">
+                    Advanced PWA with push notifications, Apple Pay, and offline support
+                </p>
+            </div>
+
+            <!-- Login/Register Forms -->
+            <div id="authSection">
+                <div class="card" style="max-width: 400px; margin: 0 auto;">
+                    <div class="card-header">
+                        <div class="auth-tabs" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <button class="btn btn-outline auth-tab active" onclick="showAuthTab('login')" id="loginTabBtn">
+                                Login
+                            </button>
+                            <button class="btn btn-outline auth-tab" onclick="showAuthTab('register')" id="registerTabBtn">
+                                Register
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <!-- Login Form -->
+                        <form id="loginForm" style="display: block;">
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="loginEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" id="loginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <span class="material-icons">login</span>
+                                Login
+                            </button>
+                        </form>
+
+                        <!-- Register Form -->
+                        <form id="registerForm" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" id="registerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" id="registerEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-input" id="registerPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-input" id="registerPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <span class="material-icons">person_add</span>
+                                Register
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="service-card" onclick="selectService('QuestGames')">
-                <div class="service-header">
-                    <div class="service-name">QuestGames</div>
-                    <div class="service-price">från 295 kr</div>
-                </div>
-                <div class="service-description">
-                    Aktiva lagutmaningar utomhus som kombinerar rörelse, logik och teamwork.
-                </div>
-                <div class="service-details">
-                    <span>⏱️ 90 minuter</span>
-                    <span>👥 6-20 personer</span>
-                    <span>⭐ 2/5 svårighet</span>
-                </div>
-            </div>
+            <!-- Services Section (shown after login) -->
+            <div id="servicesSection" style="display: none;">
+                <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem; text-align: center;">
+                    Our Services
+                </h2>
 
-            <div class="service-card" onclick="selectService('QuestHouse')">
-                <div class="service-header">
-                    <div class="service-name">QuestHouse</div>
-                    <div class="service-price">från 225 kr</div>
-                </div>
-                <div class="service-description">
-                    Immersiv dockhusupplevelse där observation och detektiv-tänk är nyckeln.
-                </div>
-                <div class="service-details">
-                    <span>⏱️ 45 minuter</span>
-                    <span>👥 2-6 personer</span>
-                    <span>⭐ 4/5 svårighet</span>
-                </div>
-            </div>
-
-            <!-- Booking Form -->
-            <div id="booking-section" class="booking-section" style="display: none;">
-                <h3 id="selected-service">Boka QuestBox</h3>
-                <form class="booking-form" onsubmit="handleBooking(event)">
-                    <div class="form-group">
-                        <label class="form-label">Datum</label>
-                        <input type="date" name="date" class="form-input" required>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- QuestBox -->
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">QuestBox</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Escape room experience in a box. Perfect for team building and parties.
+                            </p>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span class="material-icons" style="color: var(--text-light);">schedule</span>
+                                <span>60 minutes</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                <span class="material-icons" style="color: var(--text-light);">group</span>
+                                <span>2-6 players</span>
+                            </div>
+                            <button class="btn btn-primary" onclick="showBookingForm('QuestBox')" style="width: 100%;">
+                                Book Now - 500 SEK
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Tid</label>
-                        <select name="time" class="form-select" required>
-                            <option value="">Välj tid</option>
-                            <option value="10:00">10:00</option>
-                            <option value="12:00">12:00</option>
-                            <option value="14:00">14:00</option>
-                            <option value="16:00">16:00</option>
-                            <option value="18:00">18:00</option>
-                        </select>
+                    <!-- QuestGames -->
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">QuestGames</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Digital escape room games with immersive storylines and puzzles.
+                            </p>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span class="material-icons" style="color: var(--text-light);">schedule</span>
+                                <span>45 minutes</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                <span class="material-icons" style="color: var(--text-light);">group</span>
+                                <span>1-4 players</span>
+                            </div>
+                            <button class="btn btn-primary" onclick="showBookingForm('QuestGames')" style="width: 100%;">
+                                Book Now - 300 SEK
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Antal deltagare</label>
-                        <select name="participants" class="form-select" required>
-                            <option value="">Välj antal</option>
-                            <option value="2">2 personer</option>
-                            <option value="3">3 personer</option>
-                            <option value="4">4 personer</option>
-                            <option value="5">5 personer</option>
-                            <option value="6">6 personer</option>
-                            <option value="7">7 personer</option>
-                            <option value="8">8 personer</option>
-                        </select>
+                    <!-- QuestHouse -->
+                    <div class="card">
+                        <div class="card-content">
+                            <h3 class="card-title">QuestHouse</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Full-scale escape room facility with multiple themed rooms.
+                            </p>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                <span class="material-icons" style="color: var(--text-light);">schedule</span>
+                                <span>90 minutes</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                <span class="material-icons" style="color: var(--text-light);">group</span>
+                                <span>4-10 players</span>
+                            </div>
+                            <button class="btn btn-primary" onclick="showBookingForm('QuestHouse')" style="width: 100%;">
+                                Book Now - 800 SEK
+                            </button>
+                        </div>
                     </div>
-
-                    <button type="submit" class="book-btn">Boka nu</button>
-                </form>
+                </div>
             </div>
         </div>
 
-        <!-- My Bookings Tab -->
-        <div id="bookings-tab" class="tab-content">
-            <div id="bookings-list">
-                <div class="empty-state">
-                    <div class="material-icons">event_busy</div>
-                    <h3>Inga bokningar</h3>
-                    <p>Logga in för att se dina bokningar</p>
+        <!-- Bookings Tab -->
+        <div id="bookingsTab" class="tab-content">
+            <!-- Online Content -->
+            <div class="online-content">
+                <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem;">My Bookings</h2>
+
+                <!-- Push Notification Settings -->
+                <div class="notification-settings">
+                    <div class="notification-toggle">
+                        <div>
+                            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">
+                                Push Notifications
+                            </h3>
+                            <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                                Get reminders about your upcoming bookings
+                            </p>
+                        </div>
+                        <div class="toggle-switch" id="notificationToggle" onclick="toggleNotifications()"></div>
+                    </div>
+                    <button class="btn btn-outline" onclick="testNotification()" id="testNotificationBtn" style="display: none;">
+                        <span class="material-icons">notifications</span>
+                        Test Notification
+                    </button>
                 </div>
+
+                <!-- Bookings List -->
+                <div id="bookingsList">
+                    <!-- Bookings will be loaded here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyBookings" style="text-align: center; padding: 3rem 1rem; display: none;">
+                    <span class="material-icons" style="font-size: 4rem; color: var(--text-light); margin-bottom: 1rem;">
+                        event_available
+                    </span>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">No bookings yet</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Book your first escape room experience!
+                    </p>
+                    <button class="btn btn-primary" onclick="showTab('home')">
+                        <span class="material-icons">add</span>
+                        Make a Booking
+                    </button>
+                </div>
+            </div>
+
+            <!-- Offline Screen -->
+            <div class="offline-screen" id="offlineBookings">
+                <!-- Will be populated by offline manager -->
             </div>
         </div>
 
         <!-- News Tab -->
-        <div id="news-tab" class="tab-content">
-            <div id="news-list">
-                <!-- News will be loaded here -->
+        <div id="newsTab" class="tab-content">
+            <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem;">Latest News</h2>
+
+            <div class="news-grid" style="display: grid; gap: 1.5rem;">
+                <!-- News Item 1 -->
+                <div class="card">
+                    <div class="card-content">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 200px; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            🎮
+                        </div>
+                        <h3 class="card-title">New QuestGames Released!</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem;">
+                            <span class="material-icons" style="font-size: 16px; vertical-align: middle;">schedule</span>
+                            December 15, 2024
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            We've just launched three new digital escape room experiences with enhanced graphics and more challenging puzzles. Try our latest adventures today!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- News Item 2 -->
+                <div class="card">
+                    <div class="card-content">
+                        <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); height: 200px; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            🏆
+                        </div>
+                        <h3 class="card-title">Holiday Special Offers</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem;">
+                            <span class="material-icons" style="font-size: 16px; vertical-align: middle;">schedule</span>
+                            December 10, 2024
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            Book any QuestHouse experience in December and get 20% off your next booking. Perfect for holiday team building events!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- News Item 3 -->
+                <div class="card">
+                    <div class="card-content">
+                        <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); height: 200px; border-radius: var(--radius-md); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            📱
+                        </div>
+                        <h3 class="card-title">PWA Features Now Live!</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.875rem;">
+                            <span class="material-icons" style="font-size: 16px; vertical-align: middle;">schedule</span>
+                            December 5, 2024
+                        </p>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            Install our app on your device for offline booking access, push notifications, and Apple Pay support!
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Photos Tab -->
-        <div id="photos-tab" class="tab-content">
-            <div id="photos-list">
-                <div class="empty-state">
-                    <div class="material-icons">photo_library</div>
-                    <h3>Inga foton</h3>
-                    <p>Foton från dina evenemang visas här</p>
+        <div id="photosTab" class="tab-content">
+            <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem;">Photo Gallery</h2>
+
+            <div class="photo-gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <!-- Photo 1 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('QuestBox Team Challenge', 'Amazing team building session at QuestBox!')">
+                    🎯
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        QuestBox Team Challenge
+                    </div>
+                </div>
+
+                <!-- Photo 2 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('QuestHouse Mystery Room', 'Players solving the final puzzle in our mystery room!')">
+                    🔍
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        QuestHouse Mystery Room
+                    </div>
+                </div>
+
+                <!-- Photo 3 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('QuestGames Victory', 'Team celebrating their escape room victory!')">
+                    🏆
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        QuestGames Victory
+                    </div>
+                </div>
+
+                <!-- Photo 4 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('Behind the Scenes', 'Our team setting up new puzzles and challenges!')">
+                    🎭
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        Behind the Scenes
+                    </div>
+                </div>
+
+                <!-- Photo 5 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('Group Adventure', 'Large group taking on our biggest challenge!')">
+                    👥
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        Group Adventure
+                    </div>
+                </div>
+
+                <!-- Photo 6 -->
+                <div class="photo-item" style="aspect-ratio: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; cursor: pointer;" onclick="openPhotoModal('EventX Facility', 'Welcome to our amazing EventX facility in Stockholm!')">
+                    🏢
+                    <div style="position: absolute; bottom: 1rem; left: 1rem; font-size: 0.875rem; font-weight: 500;">
+                        EventX Facility
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Profile Tab -->
-        <div id="profile-tab" class="tab-content">
-            <div id="profile-content">
-                <div class="empty-state">
-                    <div class="material-icons">account_circle</div>
-                    <h3>Profil</h3>
-                    <p>Logga in för att se din profil</p>
+        <div id="profileTab" class="tab-content">
+            <h2 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 1.5rem;">My Profile</h2>
+
+            <div class="profile-content" style="max-width: 600px;">
+                <!-- User Info Card -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">Personal Information</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="profileInfo">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        <button class="btn btn-outline" onclick="editProfile()">
+                            <span class="material-icons">edit</span>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PWA Features Card -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">App Features</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="feature-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="font-weight: 500; margin-bottom: 0.25rem;">Push Notifications</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Get booking reminders</p>
+                            </div>
+                            <span id="pushStatus" style="color: var(--text-light); font-size: 0.875rem;">Checking...</span>
+                        </div>
+
+                        <div class="feature-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="font-weight: 500; margin-bottom: 0.25rem;">Apple Pay</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Quick and secure payments</p>
+                            </div>
+                            <span id="applePayStatus" style="color: var(--text-light); font-size: 0.875rem;">Checking...</span>
+                        </div>
+
+                        <div class="feature-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="font-weight: 500; margin-bottom: 0.25rem;">Apple Wallet</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Add tickets to wallet</p>
+                            </div>
+                            <span id="walletStatus" style="color: var(--text-light); font-size: 0.875rem;">Checking...</span>
+                        </div>
+
+                        <div class="feature-item" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="font-weight: 500; margin-bottom: 0.25rem;">Offline Support</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">View bookings offline</p>
+                            </div>
+                            <span id="offlineStatus" style="color: var(--success-color); font-size: 0.875rem;">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Statistics</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);" id="totalBookings">0</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Total Bookings</div>
+                            </div>
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-color);" id="completedGames">0</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Games Completed</div>
+                            </div>
+                            <div class="stat-item" style="text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning-color);" id="favoriteService">-</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Favorite Service</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -606,361 +457,766 @@
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')">
-            <i class="material-icons">home</i>
-            <span>Hem</span>
+        <div class="nav-item active" onclick="showTab('home')" data-tab="home">
+            <span class="material-icons">home</span>
+            <span>Home</span>
         </div>
-        <div class="nav-item" onclick="switchTab('bookings')">
-            <i class="material-icons">event</i>
-            <span>Bokningar</span>
+        <div class="nav-item" onclick="showTab('bookings')" data-tab="bookings">
+            <span class="material-icons">event</span>
+            <span>Bookings</span>
+            <div id="bookingsBadge" class="nav-badge" style="position: absolute; top: 4px; right: 12px; background: var(--danger-color); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.625rem; display: none; align-items: center; justify-content: center;"></div>
         </div>
-        <div class="nav-item" onclick="switchTab('news')">
-            <i class="material-icons">article</i>
-            <span>Nyheter</span>
+        <div class="nav-item" onclick="showTab('news')" data-tab="news">
+            <span class="material-icons">article</span>
+            <span>News</span>
         </div>
-        <div class="nav-item" onclick="switchTab('photos')">
-            <i class="material-icons">photo</i>
-            <span>Foton</span>
+        <div class="nav-item" onclick="showTab('photos')" data-tab="photos">
+            <span class="material-icons">photo_library</span>
+            <span>Photos</span>
         </div>
-        <div class="nav-item" onclick="switchTab('profile')">
-            <i class="material-icons">person</i>
-            <span>Profil</span>
+        <div class="nav-item" onclick="showTab('profile')" data-tab="profile">
+            <span class="material-icons">account_circle</span>
+            <span>Profile</span>
         </div>
     </nav>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="hideLoginForm()">&times;</button>
-            <div class="modal-header">
-                <h2 class="modal-title">Välkommen!</h2>
-                <p class="modal-subtitle">Logga in för att boka och hantera dina upplevelser</p>
-            </div>
-
-            <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label class="form-label">Namn</label>
-                    <input type="text" name="name" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">E-post</label>
-                    <input type="email" name="email" class="form-input" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Telefon</label>
-                    <input type="tel" name="phone" class="form-input" required>
-                </div>
-
-                <button type="submit" class="book-btn" style="width: 100%; margin-top: 10px;">
-                    Logga in
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" style="background: white; border-radius: var(--radius-lg); max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 1.25rem; font-weight: 600;" id="bookingModalTitle">Book Service</h3>
+                <button onclick="closeBookingModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light);">
+                    <span class="material-icons">close</span>
                 </button>
-            </form>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" id="bookingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time</label>
+                        <select class="form-select" id="bookingTime" required>
+                            <option value="">Select time</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="18:00">6:00 PM</option>
+                            <option value="20:00">8:00 PM</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Number of Participants</label>
+                        <select class="form-select" id="bookingParticipants" required>
+                            <option value="">Select participants</option>
+                            <option value="1">1 person</option>
+                            <option value="2">2 people</option>
+                            <option value="3">3 people</option>
+                            <option value="4">4 people</option>
+                            <option value="5">5 people</option>
+                            <option value="6">6 people</option>
+                            <option value="7">7 people</option>
+                            <option value="8">8 people</option>
+                            <option value="9">9 people</option>
+                            <option value="10">10 people</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Requirements (Optional)</label>
+                        <textarea class="form-input" id="bookingNotes" rows="3" placeholder="Any special requests or requirements..."></textarea>
+                    </div>
+
+                    <!-- Payment Options -->
+                    <div class="payment-section" style="margin: 1.5rem 0; padding: 1rem; background: var(--light-surface); border-radius: var(--radius-md);">
+                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Payment Method</h4>
+                        <div class="payment-options" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Apple Pay Button Container -->
+                            <div id="applePayContainer"></div>
+
+                            <!-- Standard Payment Button -->
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                <span class="material-icons">payment</span>
+                                Book Now - <span id="bookingPrice">0</span> SEK
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="js/app-data.js"></script>
-    <script src="js/user-system.js"></script>
-    <script src="js/email-service.js"></script>
+    <!-- Photo Modal -->
+    <div id="photoModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" style="background: white; border-radius: var(--radius-lg); max-width: 600px; width: 100%;">
+            <div class="modal-header" style="padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1.125rem; font-weight: 600;" id="photoModalTitle">Photo</h3>
+                <button onclick="closePhotoModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-light);">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; text-align: center;">
+                <div id="photoModalImage" style="width: 100%; height: 300px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; margin-bottom: 1rem;">
+                    📸
+                </div>
+                <p id="photoModalDescription" style="color: var(--text-secondary); line-height: 1.6;">Photo description</p>
+            </div>
+        </div>
+    </div>
 
+    <!-- JavaScript Modules -->
+    <script src="/js/push-notifications.js"></script>
+    <script src="/js/apple-wallet.js"></script>
+    <script src="/js/apple-pay.js"></script>
+    <script src="/js/offline-manager.js"></script>
+
+    <!-- Main Application JavaScript -->
     <script>
-        let selectedService = null;
-        let currentTab = 'home';
+        // Global variables
+        let currentUser = null;
+        let currentService = null;
+        let deferredPrompt = null;
+
+        // Service prices
+        const servicePrices = {
+            'QuestBox': 500,
+            'QuestGames': 300,
+            'QuestHouse': 800
+        };
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
-            loadNews();
-            updateUserInterface();
-
-            // Set minimum date to today
-            const dateInput = document.querySelector('input[name="date"]');
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.min = today;
         });
 
-        function initializeApp() {
+        async function initializeApp() {
+            console.log('🚀 Initializing EventX Advanced PWA...');
+
+            // Check if user is logged in
+            const userData = localStorage.getItem('eventx-user');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+                showUserInterface();
+            }
+
+            // Initialize PWA features
+            await initializePWA();
+
+            // Set minimum date for booking
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+
+            // Update PWA feature status
+            updatePWAFeatureStatus();
+
+            // Load user bookings
+            loadUserBookings();
+
+            // Update statistics
+            updateUserStatistics();
+
+            console.log('✅ App initialized successfully');
+        }
+
+        async function initializePWA() {
             // Register service worker
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => console.log('SW registered'))
-                    .catch(error => console.log('SW registration failed'));
+                try {
+                    const registration = await navigator.serviceWorker.register('/service-worker.js');
+                    console.log('SW registered:', registration);
+
+                    // Handle updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('New SW installed, update available');
+                                showUpdateAvailable();
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('SW registration failed:', error);
+                }
+            }
+
+            // Handle PWA install prompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installButton').classList.add('show');
+            });
+
+            // Handle install button click
+            document.getElementById('installButton').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const result = await deferredPrompt.userChoice;
+                    if (result.outcome === 'accepted') {
+                        console.log('PWA installed');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installButton').classList.remove('show');
+                }
+            });
+        }
+
+        function updatePWAFeatureStatus() {
+            // Push notifications status
+            if (window.pushManager) {
+                const status = window.pushManager.getSubscriptionStatus();
+                document.getElementById('pushStatus').textContent = status.isEnabled ? 'Enabled' : 'Available';
+                document.getElementById('pushStatus').style.color = status.isEnabled ? 'var(--success-color)' : 'var(--text-light)';
+            }
+
+            // Apple Pay status
+            if (window.applePayManager) {
+                const status = window.applePayManager.getPaymentCapabilities();
+                document.getElementById('applePayStatus').textContent = status.canMakePayment ? 'Available' : 'Not Available';
+                document.getElementById('applePayStatus').style.color = status.canMakePayment ? 'var(--success-color)' : 'var(--text-light)';
+            }
+
+            // Apple Wallet status
+            if (window.appleWalletManager) {
+                const canAdd = window.appleWalletManager.canAddPassesToWallet();
+                document.getElementById('walletStatus').textContent = canAdd ? 'Available' : 'Not Available';
+                document.getElementById('walletStatus').style.color = canAdd ? 'var(--success-color)' : 'var(--text-light)';
             }
         }
 
-        function switchTab(tabName) {
+        // Authentication functions
+        function showAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.getElementById('loginTabBtn');
+            const registerTab = document.getElementById('registerTabBtn');
+
+            if (tab === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+            }
+        }
+
+        // Handle form submissions
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Simple validation (in production, validate against server)
+            const users = JSON.parse(localStorage.getItem('eventx-users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('eventx-user', JSON.stringify(user));
+                showUserInterface();
+
+                // Cache user data for offline access
+                if (window.offlineManager) {
+                    window.offlineManager.cacheUserData(user);
+                }
+
+                showMessage('Welcome back! 👋', 'success');
+            } else {
+                showMessage('Invalid email or password', 'error');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const userData = {
+                id: 'user_' + Date.now(),
+                name: document.getElementById('registerName').value,
+                email: document.getElementById('registerEmail').value,
+                phone: document.getElementById('registerPhone').value,
+                password: document.getElementById('registerPassword').value,
+                joinDate: new Date().toISOString()
+            };
+
+            // Save user
+            const users = JSON.parse(localStorage.getItem('eventx-users') || '[]');
+            users.push(userData);
+            localStorage.setItem('eventx-users', JSON.stringify(users));
+
+            // Login user
+            currentUser = userData;
+            localStorage.setItem('eventx-user', JSON.stringify(userData));
+            showUserInterface();
+
+            // Cache user data for offline access
+            if (window.offlineManager) {
+                window.offlineManager.cacheUserData(userData);
+            }
+
+            showMessage('Account created successfully! 🎉', 'success');
+        });
+
+        function showUserInterface() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('servicesSection').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('userEmail').textContent = currentUser.email;
+
+            // Update profile info
+            updateProfileInfo();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('eventx-user');
+
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('servicesSection').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'none';
+
+            // Clear forms
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+
+            // Show home tab
+            showTab('home');
+
+            showMessage('Logged out successfully', 'info');
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+
             // Update navigation
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
 
-            // Switch content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName + '-tab').classList.add('active');
-
-            currentTab = tabName;
-
-            // Update content based on tab
-            if (tabName === 'bookings') {
+            // Load tab-specific content
+            if (tabName === 'bookings' && currentUser) {
                 loadUserBookings();
-            } else if (tabName === 'photos') {
-                loadUserPhotos();
-            } else if (tabName === 'profile') {
-                loadUserProfile();
+            } else if (tabName === 'profile' && currentUser) {
+                updateProfileInfo();
+                updateUserStatistics();
             }
         }
 
-        function selectService(serviceName) {
-            selectedService = serviceName;
-            document.getElementById('selected-service').textContent = `Boka ${serviceName}`;
-            document.getElementById('booking-section').style.display = 'block';
-            document.getElementById('booking-section').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function handleBooking(event) {
-            event.preventDefault();
-
-            if (!userSystem.isLoggedIn()) {
-                showLoginForm();
+        // Booking functions
+        function showBookingForm(service) {
+            if (!currentUser) {
+                showMessage('Please login first', 'warning');
                 return;
             }
 
-            const formData = new FormData(event.target);
-            const bookingData = {
-                service: selectedService,
-                date: formData.get('date'),
-                time: formData.get('time'),
-                participants: parseInt(formData.get('participants')),
-                totalPrice: calculatePrice(selectedService, parseInt(formData.get('participants')))
-            };
+            currentService = service;
+            document.getElementById('bookingModalTitle').textContent = `Book ${service}`;
+            document.getElementById('bookingPrice').textContent = servicePrices[service];
 
-            try {
-                const booking = userSystem.createBooking(bookingData);
-
-                // Send email notifications
-                emailService.sendBookingNotification(booking, userSystem.getCurrentUser());
-                emailService.sendCustomerConfirmation(booking, userSystem.getCurrentUser());
-
-                userSystem.showNotification(`Bokning skapad! Boknings-ID: ${booking.id}`);
-
-                // Reset form and hide booking section
-                event.target.reset();
-                document.getElementById('booking-section').style.display = 'none';
-
-                // Switch to bookings tab
-                switchTab('bookings');
-
-            } catch (error) {
-                userSystem.showNotification(error.message, 'error');
+            // Show Apple Pay button if available
+            if (window.applePayManager && window.applePayManager.canMakePayment) {
+                const bookingDetails = {
+                    service: service,
+                    amount: servicePrices[service],
+                    bookingId: 'temp_' + Date.now()
+                };
+                window.applePayManager.showApplePayButton(bookingDetails, 'applePayContainer');
             }
+
+            document.getElementById('bookingModal').style.display = 'flex';
         }
 
-        function calculatePrice(service, participants) {
-            const basePrices = {
-                'QuestBox': 345,
-                'QuestGames': 295,
-                'QuestHouse': 225
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+            document.getElementById('bookingForm').reset();
+            document.getElementById('applePayContainer').innerHTML = '';
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            processBooking();
+        });
+
+        function processBooking(paymentMethod = 'Standard') {
+            const booking = {
+                id: 'booking_' + Date.now(),
+                userId: currentUser.id,
+                service: currentService,
+                date: document.getElementById('bookingDate').value,
+                time: document.getElementById('bookingTime').value,
+                participants: parseInt(document.getElementById('bookingParticipants').value),
+                notes: document.getElementById('bookingNotes').value,
+                price: servicePrices[currentService],
+                paymentMethod: paymentMethod,
+                status: 'confirmed',
+                createdAt: new Date().toISOString(),
+                customerName: currentUser.name,
+                email: currentUser.email,
+                phone: currentUser.phone
             };
-            return basePrices[service] * participants;
+
+            // Save booking
+            const bookings = JSON.parse(localStorage.getItem('eventx-bookings') || '[]');
+            bookings.push(booking);
+            localStorage.setItem('eventx-bookings', JSON.stringify(bookings));
+
+            // Cache booking for offline access
+            if (window.offlineManager) {
+                window.offlineManager.cacheBookingData(booking);
+            }
+
+            // Schedule push notifications
+            if (window.pushManager && window.pushManager.isEnabled) {
+                window.pushManager.scheduleBookingReminder(booking);
+            }
+
+            // Send email notification (EmailJS integration would go here)
+            console.log('Booking created:', booking);
+
+            closeBookingModal();
+            showMessage(`${currentService} booked successfully! 🎉`, 'success');
+
+            // Update bookings list
+            loadUserBookings();
+            updateUserStatistics();
+
+            // Show bookings tab
+            showTab('bookings');
         }
 
         function loadUserBookings() {
-            const bookingsList = document.getElementById('bookings-list');
+            if (!currentUser) return;
 
-            if (!userSystem.isLoggedIn()) {
-                bookingsList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="material-icons">event_busy</div>
-                        <h3>Inga bokningar</h3>
-                        <p>Logga in för att se dina bokningar</p>
-                    </div>
-                `;
-                return;
-            }
+            const bookings = JSON.parse(localStorage.getItem('eventx-bookings') || '[]')
+                .filter(b => b.userId === currentUser.id)
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            const bookings = userSystem.getUserBookings();
+            const bookingsList = document.getElementById('bookingsList');
+            const emptyBookings = document.getElementById('emptyBookings');
 
             if (bookings.length === 0) {
-                bookingsList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="material-icons">event_available</div>
-                        <h3>Inga bokningar än</h3>
-                        <p>Gör din första bokning på Hem-fliken</p>
-                    </div>
-                `;
+                bookingsList.innerHTML = '';
+                emptyBookings.style.display = 'block';
                 return;
             }
 
+            emptyBookings.style.display = 'none';
             bookingsList.innerHTML = bookings.map(booking => {
-                const timeInfo = userSystem.getTimeUntilEvent(booking.eventDateTime);
+                const bookingDate = new Date(booking.date + ' ' + booking.time);
+                const isUpcoming = bookingDate > new Date();
+
                 return `
                     <div class="booking-card">
-                        <div class="booking-status status-${timeInfo.status}">${booking.status}</div>
-                        <h3>${booking.service}</h3>
-                        <p><strong>Datum:</strong> ${new Date(booking.date).toLocaleDateString('sv-SE')}</p>
-                        <p><strong>Tid:</strong> ${booking.time}</p>
-                        <p><strong>Deltagare:</strong> ${booking.participants} personer</p>
-                        <p><strong>Pris:</strong> ${booking.totalPrice} SEK</p>
-                        <p><strong>Boknings-ID:</strong> ${booking.id}</p>
-                        ${timeInfo.status !== 'completed' ? `
-                            <div class="countdown">
-                                ⏰ ${timeInfo.text}
+                        <div class="booking-header">
+                            <h3>${booking.service}</h3>
+                            <span class="booking-status" style="background: ${isUpcoming ? 'var(--success-color)' : 'var(--text-light)'}">
+                                ${isUpcoming ? 'Upcoming' : 'Completed'}
+                            </span>
+                        </div>
+
+                        ${isUpcoming ? `
+                            <div class="countdown-timer" style="margin-bottom: 1rem;">
+                                <div class="countdown-title">Time until your adventure</div>
+                                <div class="countdown-display" id="countdown-${booking.id}">
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="days-${booking.id}">--</div>
+                                        <div class="countdown-label">Days</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="hours-${booking.id}">--</div>
+                                        <div class="countdown-label">Hours</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="minutes-${booking.id}">--</div>
+                                        <div class="countdown-label">Minutes</div>
+                                    </div>
+                                </div>
                             </div>
                         ` : ''}
+
+                        <div class="booking-details">
+                            <div class="detail-item">
+                                <span class="material-icons">event</span>
+                                <span>${booking.date} at ${booking.time}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="material-icons">group</span>
+                                <span>${booking.participants} participants</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="material-icons">payment</span>
+                                <span>${booking.price} SEK (${booking.paymentMethod})</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="material-icons">confirmation_number</span>
+                                <span>ID: ${booking.id}</span>
+                            </div>
+                        </div>
+
+                        <div class="booking-actions">
+                            <button class="btn btn-outline" onclick="shareBooking('${booking.id}')">
+                                <span class="material-icons">share</span>
+                                Share
+                            </button>
+                            ${window.appleWalletManager && window.appleWalletManager.isSupported ? `
+                                <button class="btn btn-outline" onclick="addToWallet('${booking.id}')">
+                                    <span class="material-icons">account_balance_wallet</span>
+                                    Add to Wallet
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-primary" onclick="viewTicket('${booking.id}')">
+                                <span class="material-icons">local_activity</span>
+                                View Ticket
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
-        }
 
-        function loadNews() {
-            const newsList = document.getElementById('news-list');
-            const news = APP_DATA.news;
+            // Start countdown timers
+            bookings.filter(b => new Date(b.date + ' ' + b.time) > new Date())
+                .forEach(booking => startCountdown(booking));
 
-            newsList.innerHTML = news.map(article => `
-                <div class="news-card" onclick="showNewsDetail(${article.id})">
-                    <h3 class="news-title">${article.title}</h3>
-                    <div class="news-date">${new Date(article.date).toLocaleDateString('sv-SE')}</div>
-                    <p class="news-summary">${article.summary}</p>
-                </div>
-            `).join('');
-        }
-
-        function showNewsDetail(articleId) {
-            const article = APP_DATA.news.find(n => n.id === articleId);
-            if (article) {
-                alert(`${article.title}\n\n${article.summary}`);
+            // Update navigation badge
+            const upcomingCount = bookings.filter(b => new Date(b.date + ' ' + b.time) > new Date()).length;
+            const badge = document.getElementById('bookingsBadge');
+            if (upcomingCount > 0) {
+                badge.textContent = upcomingCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
             }
         }
 
-        function loadUserPhotos() {
-            const photosList = document.getElementById('photos-list');
+        function startCountdown(booking) {
+            const targetTime = new Date(booking.date + ' ' + booking.time).getTime();
 
-            if (!userSystem.isLoggedIn()) {
-                photosList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="material-icons">photo_library</div>
-                        <h3>Inga foton</h3>
-                        <p>Logga in för att se foton från dina evenemang</p>
-                    </div>
-                `;
-                return;
-            }
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
 
-            const userPhotos = APP_DATA.user_photos;
+                if (distance < 0) {
+                    clearInterval(timer);
+                    loadUserBookings(); // Refresh to show as completed
+                    return;
+                }
 
-            if (userPhotos.length === 0) {
-                photosList.innerHTML = `
-                    <div class="empty-state">
-                        <div class="material-icons">photo_camera</div>
-                        <h3>Inga foton än</h3>
-                        <p>Foton från dina evenemang kommer visas här</p>
-                    </div>
-                `;
-                return;
-            }
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
-            photosList.innerHTML = userPhotos.map(event => `
-                <div class="photo-event">
-                    <h3 class="event-title">${event.event_name}</h3>
-                    <p>📅 ${new Date(event.date).toLocaleDateString('sv-SE')}</p>
-                    <div class="photo-grid">
-                        ${event.photos.map(photo => `
-                            <div class="photo-item" onclick="showPhoto(${photo.id})">
-                                <div class="photo-placeholder">
-                                    📷<br>
-                                    <small>${photo.caption}</small>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+                const daysEl = document.getElementById(`days-${booking.id}`);
+                const hoursEl = document.getElementById(`hours-${booking.id}`);
+                const minutesEl = document.getElementById(`minutes-${booking.id}`);
+
+                if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
+                if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+                if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+            }, 1000);
         }
 
-        function showPhoto(photoId) {
-            userSystem.showNotification('Fotot öppnas... (demo funktionalitet)');
-        }
+        // Notification functions
+        async function toggleNotifications() {
+            const toggle = document.getElementById('notificationToggle');
+            const testBtn = document.getElementById('testNotificationBtn');
 
-        function loadUserProfile() {
-            const profileContent = document.getElementById('profile-content');
-
-            if (!userSystem.isLoggedIn()) {
-                profileContent.innerHTML = `
-                    <div class="empty-state">
-                        <div class="material-icons">account_circle</div>
-                        <h3>Profil</h3>
-                        <p>Logga in för att se din profil</p>
-                        <button onclick="showLoginForm()" class="book-btn" style="margin-top: 20px;">
-                            Logga in
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            const user = userSystem.getCurrentUser();
-            const bookings = userSystem.getUserBookings();
-
-            profileContent.innerHTML = `
-                <div class="service-card">
-                    <h2>👋 Hej ${user.name}!</h2>
-                    <p><strong>E-post:</strong> ${user.email}</p>
-                    <p><strong>Telefon:</strong> ${user.phone}</p>
-                    <p><strong>Medlem sedan:</strong> ${new Date(user.registeredAt).toLocaleDateString('sv-SE')}</p>
-                </div>
-
-                <div class="service-card">
-                    <h3>📊 Statistik</h3>
-                    <p><strong>Totala bokningar:</strong> ${bookings.length}</p>
-                    <p><strong>Aktiva bokningar:</strong> ${bookings.filter(b => new Date(b.eventDateTime) > new Date()).length}</p>
-                    <p><strong>Genomförda:</strong> ${bookings.filter(b => new Date(b.eventDateTime) < new Date()).length}</p>
-                </div>
-
-                <button onclick="userSystem.logoutUser()" class="book-btn" style="background: #666; margin-top: 20px;">
-                    Logga ut
-                </button>
-            `;
-        }
-
-        function updateUserInterface() {
-            if (userSystem.isLoggedIn()) {
-                // Update interface for logged in user
-                if (currentTab === 'bookings') {
-                    loadUserBookings();
-                } else if (currentTab === 'photos') {
-                    loadUserPhotos();
-                } else if (currentTab === 'profile') {
-                    loadUserProfile();
+            if (window.pushManager) {
+                try {
+                    if (window.pushManager.isEnabled) {
+                        await window.pushManager.unsubscribe();
+                        toggle.classList.remove('active');
+                        testBtn.style.display = 'none';
+                        showMessage('Push notifications disabled', 'info');
+                    } else {
+                        await window.pushManager.subscribe();
+                        toggle.classList.add('active');
+                        testBtn.style.display = 'block';
+                        showMessage('Push notifications enabled! 🔔', 'success');
+                    }
+                    updatePWAFeatureStatus();
+                } catch (error) {
+                    console.error('Notification toggle failed:', error);
+                    showMessage('Failed to toggle notifications', 'error');
                 }
             }
         }
 
-        // Auto-update countdowns every minute
-        setInterval(() => {
-            if (currentTab === 'bookings' && userSystem.isLoggedIn()) {
-                loadUserBookings();
+        async function testNotification() {
+            if (window.pushManager && window.pushManager.isEnabled) {
+                try {
+                    await window.pushManager.sendTestNotification();
+                } catch (error) {
+                    showMessage('Test notification failed', 'error');
+                }
             }
-        }, 60000);
-    </script>
-
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
         }
+
+        // Photo gallery functions
+        function openPhotoModal(title, description) {
+            document.getElementById('photoModalTitle').textContent = title;
+            document.getElementById('photoModalDescription').textContent = description;
+            document.getElementById('photoModal').style.display = 'flex';
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').style.display = 'none';
+        }
+
+        // Profile functions
+        function updateProfileInfo() {
+            if (!currentUser) return;
+
+            document.getElementById('profileInfo').innerHTML = `
+                <div style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="info-item" style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Name:</span>
+                        <span style="font-weight: 500;">${currentUser.name}</span>
+                    </div>
+                    <div class="info-item" style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Email:</span>
+                        <span style="font-weight: 500;">${currentUser.email}</span>
+                    </div>
+                    <div class="info-item" style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Phone:</span>
+                        <span style="font-weight: 500;">${currentUser.phone}</span>
+                    </div>
+                    <div class="info-item" style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-secondary);">Member since:</span>
+                        <span style="font-weight: 500;">${new Date(currentUser.joinDate).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateUserStatistics() {
+            if (!currentUser) return;
+
+            const bookings = JSON.parse(localStorage.getItem('eventx-bookings') || '[]')
+                .filter(b => b.userId === currentUser.id);
+
+            const totalBookings = bookings.length;
+            const completedGames = bookings.filter(b => new Date(b.date + ' ' + b.time) < new Date()).length;
+
+            // Find favorite service
+            const serviceCounts = bookings.reduce((acc, booking) => {
+                acc[booking.service] = (acc[booking.service] || 0) + 1;
+                return acc;
+            }, {});
+
+            const favoriteService = Object.keys(serviceCounts).length > 0 
+                ? Object.keys(serviceCounts).reduce((a, b) => serviceCounts[a] > serviceCounts[b] ? a : b)
+                : '-';
+
+            document.getElementById('totalBookings').textContent = totalBookings;
+            document.getElementById('completedGames').textContent = completedGames;
+            document.getElementById('favoriteService').textContent = favoriteService === '-' ? '-' : favoriteService.replace('Quest', '');
+        }
+
+        // Utility functions
+        function shareBooking(bookingId) {
+            const bookings = JSON.parse(localStorage.getItem('eventx-bookings') || '[]');
+            const booking = bookings.find(b => b.id === bookingId);
+
+            if (booking) {
+                const shareData = {
+                    title: `EventX Booking - ${booking.service}`,
+                    text: `My booking for ${booking.service} on ${booking.date} at ${booking.time}`,
+                    url: window.location.origin + `/?booking=${bookingId}`
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData);
+                } else {
+                    navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`)
+                        .then(() => showMessage('Booking details copied to clipboard!', 'success'));
+                }
+            }
+        }
+
+        function addToWallet(bookingId) {
+            const bookings = JSON.parse(localStorage.getItem('eventx-bookings') || '[]');
+            const booking = bookings.find(b => b.id === bookingId);
+
+            if (booking && window.appleWalletManager) {
+                window.appleWalletManager.generateBookingPass(booking);
+            }
+        }
+
+        function viewTicket(bookingId) {
+            if (window.offlineManager) {
+                window.offlineManager.viewOfflineTicket(bookingId);
+            }
+        }
+
+        function editProfile() {
+            showMessage('Profile editing coming soon!', 'info');
+        }
+
+        function showUpdateAvailable() {
+            if (confirm('A new version is available. Update now?')) {
+                window.location.reload();
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.createElement('div');
+            messageEl.className = `offline-message offline-message--${type}`;
+            messageEl.innerHTML = `
+                <span class="material-icons">
+                    ${type === 'success' ? 'check_circle' : 
+                      type === 'warning' ? 'warning' : 
+                      type === 'error' ? 'error' : 'info'}
+                </span>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(messageEl);
+
+            setTimeout(() => {
+                messageEl.remove();
+            }, 5000);
+        }
+
+        // Apple Pay success callback
+        window.onApplePaySuccess = function(result, bookingDetails) {
+            console.log('Apple Pay success:', result);
+            processBooking('Apple Pay');
+        };
+
+        // Apple Pay error callback
+        window.onApplePayError = function(error) {
+            console.error('Apple Pay error:', error);
+            showMessage('Apple Pay payment failed', 'error');
+        };
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeBookingModal();
+                closePhotoModal();
+            }
+        });
+
+        // Handle back button
+        window.addEventListener('popstate', function(e) {
+            if (e.state && e.state.tab) {
+                showTab(e.state.tab);
+            }
+        });
+
+        console.log('🎉 EventX Advanced PWA loaded successfully!');
     </script>
 </body>
 </html>

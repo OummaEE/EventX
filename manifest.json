@@ -1,20 +1,46 @@
 {
-  "name": "EventX Escape Room Booking",
+  "name": "EventX Escape Room - Advanced PWA",
   "short_name": "EventX",
-  "description": "Boka EventX escape room upplevelser - QuestBox, QuestGames och QuestHouse",
+  "description": "Komplett bokningssystem för EventX escape room upplevelser med push-notiser, Apple Pay och Apple Wallet",
   "start_url": "/",
   "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2196F3",
   "orientation": "portrait-primary",
-  "theme_color": "#FF6B35",
-  "background_color": "#1A1A1A",
-  "categories": [
-    "lifestyle",
-    "entertainment",
-    "games"
-  ],
-  "lang": "sv",
-  "dir": "ltr",
   "scope": "/",
+  "lang": "sv-SE",
+  "dir": "ltr",
+  "categories": [
+    "entertainment",
+    "games",
+    "lifestyle"
+  ],
+  "shortcuts": [
+    {
+      "name": "Ny bokning",
+      "short_name": "Boka",
+      "description": "Boka en ny escape room upplevelse",
+      "url": "/?shortcut=book",
+      "icons": [
+        {
+          "src": "icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Mina bokningar",
+      "short_name": "Bokningar",
+      "description": "Se dina aktiva bokningar",
+      "url": "/?shortcut=bookings",
+      "icons": [
+        {
+          "src": "icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "icons/icon-72x72.png",
@@ -42,9 +68,16 @@
       "type": "image/png"
     },
     {
+      "src": "icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icons/icon-384x384.png",
@@ -55,29 +88,30 @@
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "assets/screenshot-mobile.png",
-      "sizes": "360x640",
+      "src": "icons/screenshot-mobile.png",
+      "sizes": "390x844",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "EventX booking interface"
     }
   ],
-  "shortcuts": [
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
     {
-      "name": "Snabbbokning",
-      "short_name": "Boka",
-      "description": "Boka direkt utan att öppna appen",
-      "url": "/?quick=true",
-      "icons": [
-        {
-          "src": "icons/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
+      "protocol": "web+eventx",
+      "url": "/booking?type=%s"
     }
-  ]
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

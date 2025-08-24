@@ -1,0 +1,36 @@
+{
+  "name": "eventx-escape-room-pwa",
+  "version": "1.0.0",
+  "description": "Progressive Web App för bokning av EventX escape room upplevelser",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "deploy": "gh-pages -d .",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DITT-ANVÄNDARNAMN/eventx-escape-room-pwa.git"
+  },
+  "keywords": [
+    "pwa",
+    "progressive-web-app",
+    "escape-room",
+    "booking",
+    "eventx",
+    "sweden",
+    "mobile-app"
+  ],
+  "author": "EventX",
+  "license": "MIT",
+  "homepage": "https://DITT-ANVÄNDARNAMN.github.io/eventx-escape-room-pwa",
+  "bugs": {
+    "url": "https://github.com/DITT-ANVÄNDARNAMN/eventx-escape-room-pwa/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^4.0.0"
+  }
+}

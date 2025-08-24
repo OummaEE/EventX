@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EventX - Redirecting...</title>
+</head>
+<body>
+    <script>
+        // Перенаправляем любую неизвестную страницу на index.html в той же папке
+        const p = location.pathname;
+        const base = p.substring(0, p.lastIndexOf('/') + 1);
+        location.replace(base + 'index.html' + location.search + location.hash);
+    </script>
+</body>
+</html>

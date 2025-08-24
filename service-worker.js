@@ -1,25 +1,25 @@
 // Advanced Service Worker for EventX PWA
-// Version 2.1 - Enhanced with Push Notifications, Apple Wallet, and Advanced Offline
+// Version 2.2 - Enhanced with Push Notifications, Apple Wallet, and Advanced Offline
 
-const CACHE_NAME = 'eventx-pwa-v2.1';
-const STATIC_CACHE = 'eventx-static-v2.1';
-const DYNAMIC_CACHE = 'eventx-dynamic-v2.1';
-const OFFLINE_CACHE = 'eventx-offline-v2.1';
+const CACHE_NAME = 'eventx-pwa-v2.2';
+const STATIC_CACHE = 'eventx-static-v2.2';
+const DYNAMIC_CACHE = 'eventx-dynamic-v2.2';
+const OFFLINE_CACHE = 'eventx-offline-v2.2';
 
 // Cache resources
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/js/user-system.js',
-    '/js/email-service.js',
-    '/js/push-notifications.js',
-    '/js/apple-wallet.js',
-    '/js/apple-pay.js',
-    '/css/styles.css',
-    '/icons/icon-192x192.png',
-    '/icons/icon-512x512.png',
-    '/offline.html',
+    './',
+    './index.html',
+    './manifest.json',
+    './js/user-system.js',
+    './js/email-service.js',
+    './js/push-notifications.js',
+    './js/apple-wallet.js',
+    './js/apple-pay.js',
+    './css/styles.css',
+    './icons/icon-192x192.png',
+    './icons/icon-512x512.png',
+    './offline.html',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
 ];
@@ -58,7 +58,7 @@ self.addEventListener('install', event => {
 
             // Cache offline page
             caches.open(OFFLINE_CACHE).then(cache => {
-                return cache.add('/offline.html');
+                return cache.add('./offline.html');
             })
         ]).then(() => {
             console.log('[SW] Installation complete');
@@ -141,7 +141,7 @@ async function handleNetworkFirst(request) {
 
         // Return offline page for navigation requests
         if (request.mode === 'navigate') {
-            return caches.match('/offline.html');
+            return caches.match('./offline.html');
         }
 
         throw error;
@@ -205,24 +205,24 @@ self.addEventListener('push', event => {
     let notificationData = {
         title: 'EventX Notification',
         body: 'You have a new notification',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/badge-72x72.png',
+        icon: './icons/icon-192x192.png',
+        badge: './icons/badge-72x72.png',
         tag: 'eventx-notification',
         requireInteraction: true,
         actions: [
             {
                 action: 'view',
                 title: 'View Details',
-                icon: '/icons/action-view.png'
+                icon: './icons/action-view.png'
             },
             {
                 action: 'dismiss',
                 title: 'Dismiss',
-                icon: '/icons/action-dismiss.png'
+                icon: './icons/action-dismiss.png'
             }
         ],
         data: {
-            url: '/',
+            url: './',
             timestamp: Date.now()
         }
     };
@@ -252,7 +252,7 @@ self.addEventListener('notificationclick', event => {
         return;
     }
 
-    const url = event.notification.data?.url || '/';
+    const url = event.notification.data?.url || './';
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -367,7 +367,7 @@ self.addEventListener('message', event => {
 async function cacheBookingData(booking) {
     try {
         const cache = await caches.open(OFFLINE_CACHE);
-        const bookingUrl = `/booking/${booking.id}`;
+        const bookingUrl = `./booking/${booking.id}`;
 
         const response = new Response(JSON.stringify(booking), {
             headers: { 'Content-Type': 'application/json' }
@@ -400,4 +400,4 @@ async function scheduleNotification(notification) {
 }
 
 // Console log for debugging
-console.log('[SW] EventX Advanced Service Worker v2.1 loaded');
+console.log('[SW] EventX Advanced Service Worker v2.2 loaded');

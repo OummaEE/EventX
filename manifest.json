@@ -2,12 +2,12 @@
   "name": "EventX Escape Room - Advanced PWA",
   "short_name": "EventX",
   "description": "Komplett bokningssystem för EventX escape room upplevelser med push-notiser, Apple Pay och Apple Wallet",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2196F3",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "./",
   "lang": "sv-SE",
   "dir": "ltr",
   "categories": [
@@ -20,7 +20,7 @@
       "name": "Ny bokning",
       "short_name": "Boka",
       "description": "Boka en ny escape room upplevelse",
-      "url": "/?shortcut=book",
+      "url": "./?shortcut=book",
       "icons": [
         {
           "src": "icons/icon-96x96.png",
@@ -32,7 +32,7 @@
       "name": "Mina bokningar",
       "short_name": "Bokningar",
       "description": "Se dina aktiva bokningar",
-      "url": "/?shortcut=bookings",
+      "url": "./?shortcut=bookings",
       "icons": [
         {
           "src": "icons/icon-96x96.png",
@@ -105,7 +105,7 @@
   "protocol_handlers": [
     {
       "protocol": "web+eventx",
-      "url": "/booking?type=%s"
+      "url": "./booking?type=%s"
     }
   ],
   "edge_side_panel": {

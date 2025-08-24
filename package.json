@@ -1,7 +1,7 @@
 {
   "name": "eventx-escape-room-pwa",
   "version": "1.0.0",
-  "description": "Progressive Web App för bokning av EventX escape room upplevelser",
+  "description": "Progressive Web App för bokning av EventX escape room upplevelser med fullständig användar- och bokningssystem",
   "main": "index.html",
   "scripts": {
     "start": "python -m http.server 8000",
@@ -10,27 +10,38 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DITT-ANVÄNDARNAMN/eventx-escape-room-pwa.git"
+    "url": "https://github.com/USERNAME/eventx-escape-room-pwa.git"
   },
   "keywords": [
     "pwa",
     "progressive-web-app",
     "escape-room",
-    "booking",
+    "booking-system",
     "eventx",
     "sweden",
-    "mobile-app"
+    "mobile-app",
+    "registration",
+    "email-notifications",
+    "user-system"
   ],
-  "author": "EventX",
+  "author": "EventX - Vi skapar magi!",
   "license": "MIT",
-  "homepage": "https://DITT-ANVÄNDARNAMN.github.io/eventx-escape-room-pwa",
+  "homepage": "https://USERNAME.github.io/eventx-escape-room-pwa",
   "bugs": {
-    "url": "https://github.com/DITT-ANVÄNDARNAMN/eventx-escape-room-pwa/issues"
+    "url": "https://github.com/USERNAME/eventx-escape-room-pwa/issues"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "devDependencies": {
     "gh-pages": "^4.0.0"
+  },
+  "pwa": {
+    "name": "EventX Escape Room",
+    "short_name": "EventX",
+    "description": "Boka escape room upplevelser från EventX",
+    "theme_color": "#2196F3",
+    "background_color": "#ffffff",
+    "display": "standalone"
   }
 }

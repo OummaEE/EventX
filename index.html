@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventX - Escape Room Booking</title>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="background-color" content="#1A1A1A">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+            color: #FFFFFF;
+            overflow-x: hidden;
+            padding-bottom: 70px;
+        }
+
+        /* App Header */
+        .app-header {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            padding: 20px 20px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+
+        #user-status {
+            display: flex;
+            align-items: center;
+        }
+
+        .login-btn, .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover, .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Tabs Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Service Cards */
+        .service-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .service-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FF6B35;
+        }
+
+        .service-price {
+            font-size: 18px;
+            font-weight: 500;
+            color: #4CAF50;
+        }
+
+        .service-description {
+            color: #CCCCCC;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .service-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Booking Section */
+        .booking-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: #CCCCCC;
+            margin-bottom: 5px;
+        }
+
+        .form-input, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .book-btn {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #999;
+        }
+
+        .nav-item.active {
+            color: #FF6B35;
+        }
+
+        .nav-item .material-icons {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+        }
+
+        /* User Bookings */
+        .booking-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .booking-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-confirmed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-upcoming {
+            background: #FF9800;
+            color: white;
+        }
+
+        .status-completed {
+            background: #666;
+            color: white;
+        }
+
+        .countdown {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* News Cards */
+        .news-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF6B35;
+            margin-bottom: 8px;
+        }
+
+        .news-date {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .news-summary {
+            color: #CCCCCC;
+            line-height: 1.5;
+        }
+
+        /* Photo Gallery */
+        .photo-event {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FF6B35;
+            margin-bottom: 10px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-placeholder {
+            color: #666;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2D2D2D 0%, #1A1A1A 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 5px;
+        }
+
+        .modal-subtitle {
+            color: #CCCCCC;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            z-index: 1001;
+            animation: slideInRight 0.3s ease;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state .material-icons {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 15px;
+            }
+
+            .service-card, .booking-card, .news-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">EventX</h1>
+            <div id="user-status">
+                <button onclick="showLoginForm()" class="login-btn">Logga in</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="service-card" onclick="selectService('QuestBox')">
+                <div class="service-header">
+                    <div class="service-name">QuestBox</div>
+                    <div class="service-price">från 345 kr</div>
+                </div>
+                <div class="service-description">
+                    Mobilt escape room för 4-8 personer. Lös mysterier och gåtor i en immersiv upplevelse.
+                </div>
+                <div class="service-details">
+                    <span>⏱️ 60 minuter</span>
+                    <span>👥 4-8 personer</span>
+                    <span>⭐ 3/5 svårighet</span>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="selectService('QuestGames')">
+                <div class="service-header">
+                    <div class="service-name">QuestGames</div>
+                    <div class="service-price">från 295 kr</div>
+                </div>
+                <div class="service-description">
+                    Aktiva lagutmaningar utomhus som kombinerar rörelse, logik och teamwork.
+                </div>
+                <div class="service-details">
+                    <span>⏱️ 90 minuter</span>
+                    <span>👥 6-20 personer</span>
+                    <span>⭐ 2/5 svårighet</span>
+                </div>
+            </div>
+
+            <div class="service-card" onclick="selectService('QuestHouse')">
+                <div class="service-header">
+                    <div class="service-name">QuestHouse</div>
+                    <div class="service-price">från 225 kr</div>
+                </div>
+                <div class="service-description">
+                    Immersiv dockhusupplevelse där observation och detektiv-tänk är nyckeln.
+                </div>
+                <div class="service-details">
+                    <span>⏱️ 45 minuter</span>
+                    <span>👥 2-6 personer</span>
+                    <span>⭐ 4/5 svårighet</span>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <div id="booking-section" class="booking-section" style="display: none;">
+                <h3 id="selected-service">Boka QuestBox</h3>
+                <form class="booking-form" onsubmit="handleBooking(event)">
+                    <div class="form-group">
+                        <label class="form-label">Datum</label>
+                        <input type="date" name="date" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tid</label>
+                        <select name="time" class="form-select" required>
+                            <option value="">Välj tid</option>
+                            <option value="10:00">10:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="18:00">18:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Antal deltagare</label>
+                        <select name="participants" class="form-select" required>
+                            <option value="">Välj antal</option>
+                            <option value="2">2 personer</option>
+                            <option value="3">3 personer</option>
+                            <option value="4">4 personer</option>
+                            <option value="5">5 personer</option>
+                            <option value="6">6 personer</option>
+                            <option value="7">7 personer</option>
+                            <option value="8">8 personer</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="book-btn">Boka nu</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- My Bookings Tab -->
+        <div id="bookings-tab" class="tab-content">
+            <div id="bookings-list">
+                <div class="empty-state">
+                    <div class="material-icons">event_busy</div>
+                    <h3>Inga bokningar</h3>
+                    <p>Logga in för att se dina bokningar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- News Tab -->
+        <div id="news-tab" class="tab-content">
+            <div id="news-list">
+                <!-- News will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Photos Tab -->
+        <div id="photos-tab" class="tab-content">
+            <div id="photos-list">
+                <div class="empty-state">
+                    <div class="material-icons">photo_library</div>
+                    <h3>Inga foton</h3>
+                    <p>Foton från dina evenemang visas här</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile-tab" class="tab-content">
+            <div id="profile-content">
+                <div class="empty-state">
+                    <div class="material-icons">account_circle</div>
+                    <h3>Profil</h3>
+                    <p>Logga in för att se din profil</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')">
+            <i class="material-icons">home</i>
+            <span>Hem</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('bookings')">
+            <i class="material-icons">event</i>
+            <span>Bokningar</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('news')">
+            <i class="material-icons">article</i>
+            <span>Nyheter</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('photos')">
+            <i class="material-icons">photo</i>
+            <span>Foton</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile')">
+            <i class="material-icons">person</i>
+            <span>Profil</span>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="hideLoginForm()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title">Välkommen!</h2>
+                <p class="modal-subtitle">Logga in för att boka och hantera dina upplevelser</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Namn</label>
+                    <input type="text" name="name" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">E-post</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Telefon</label>
+                    <input type="tel" name="phone" class="form-input" required>
+                </div>
+
+                <button type="submit" class="book-btn" style="width: 100%; margin-top: 10px;">
+                    Logga in
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/app-data.js"></script>
+    <script src="js/user-system.js"></script>
+    <script src="js/email-service.js"></script>
+
+    <script>
+        let selectedService = null;
+        let currentTab = 'home';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            loadNews();
+            updateUserInterface();
+
+            // Set minimum date to today
+            const dateInput = document.querySelector('input[name="date"]');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+        });
+
+        function initializeApp() {
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Switch content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            currentTab = tabName;
+
+            // Update content based on tab
+            if (tabName === 'bookings') {
+                loadUserBookings();
+            } else if (tabName === 'photos') {
+                loadUserPhotos();
+            } else if (tabName === 'profile') {
+                loadUserProfile();
+            }
+        }
+
+        function selectService(serviceName) {
+            selectedService = serviceName;
+            document.getElementById('selected-service').textContent = `Boka ${serviceName}`;
+            document.getElementById('booking-section').style.display = 'block';
+            document.getElementById('booking-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+
+            if (!userSystem.isLoggedIn()) {
+                showLoginForm();
+                return;
+            }
+
+            const formData = new FormData(event.target);
+            const bookingData = {
+                service: selectedService,
+                date: formData.get('date'),
+                time: formData.get('time'),
+                participants: parseInt(formData.get('participants')),
+                totalPrice: calculatePrice(selectedService, parseInt(formData.get('participants')))
+            };
+
+            try {
+                const booking = userSystem.createBooking(bookingData);
+
+                // Send email notifications
+                emailService.sendBookingNotification(booking, userSystem.getCurrentUser());
+                emailService.sendCustomerConfirmation(booking, userSystem.getCurrentUser());
+
+                userSystem.showNotification(`Bokning skapad! Boknings-ID: ${booking.id}`);
+
+                // Reset form and hide booking section
+                event.target.reset();
+                document.getElementById('booking-section').style.display = 'none';
+
+                // Switch to bookings tab
+                switchTab('bookings');
+
+            } catch (error) {
+                userSystem.showNotification(error.message, 'error');
+            }
+        }
+
+        function calculatePrice(service, participants) {
+            const basePrices = {
+                'QuestBox': 345,
+                'QuestGames': 295,
+                'QuestHouse': 225
+            };
+            return basePrices[service] * participants;
+        }
+
+        function loadUserBookings() {
+            const bookingsList = document.getElementById('bookings-list');
+
+            if (!userSystem.isLoggedIn()) {
+                bookingsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">event_busy</div>
+                        <h3>Inga bokningar</h3>
+                        <p>Logga in för att se dina bokningar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const bookings = userSystem.getUserBookings();
+
+            if (bookings.length === 0) {
+                bookingsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">event_available</div>
+                        <h3>Inga bokningar än</h3>
+                        <p>Gör din första bokning på Hem-fliken</p>
+                    </div>
+                `;
+                return;
+            }
+
+            bookingsList.innerHTML = bookings.map(booking => {
+                const timeInfo = userSystem.getTimeUntilEvent(booking.eventDateTime);
+                return `
+                    <div class="booking-card">
+                        <div class="booking-status status-${timeInfo.status}">${booking.status}</div>
+                        <h3>${booking.service}</h3>
+                        <p><strong>Datum:</strong> ${new Date(booking.date).toLocaleDateString('sv-SE')}</p>
+                        <p><strong>Tid:</strong> ${booking.time}</p>
+                        <p><strong>Deltagare:</strong> ${booking.participants} personer</p>
+                        <p><strong>Pris:</strong> ${booking.totalPrice} SEK</p>
+                        <p><strong>Boknings-ID:</strong> ${booking.id}</p>
+                        ${timeInfo.status !== 'completed' ? `
+                            <div class="countdown">
+                                ⏰ ${timeInfo.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadNews() {
+            const newsList = document.getElementById('news-list');
+            const news = APP_DATA.news;
+
+            newsList.innerHTML = news.map(article => `
+                <div class="news-card" onclick="showNewsDetail(${article.id})">
+                    <h3 class="news-title">${article.title}</h3>
+                    <div class="news-date">${new Date(article.date).toLocaleDateString('sv-SE')}</div>
+                    <p class="news-summary">${article.summary}</p>
+                </div>
+            `).join('');
+        }
+
+        function showNewsDetail(articleId) {
+            const article = APP_DATA.news.find(n => n.id === articleId);
+            if (article) {
+                alert(`${article.title}\n\n${article.summary}`);
+            }
+        }
+
+        function loadUserPhotos() {
+            const photosList = document.getElementById('photos-list');
+
+            if (!userSystem.isLoggedIn()) {
+                photosList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">photo_library</div>
+                        <h3>Inga foton</h3>
+                        <p>Logga in för att se foton från dina evenemang</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const userPhotos = APP_DATA.user_photos;
+
+            if (userPhotos.length === 0) {
+                photosList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">photo_camera</div>
+                        <h3>Inga foton än</h3>
+                        <p>Foton från dina evenemang kommer visas här</p>
+                    </div>
+                `;
+                return;
+            }
+
+            photosList.innerHTML = userPhotos.map(event => `
+                <div class="photo-event">
+                    <h3 class="event-title">${event.event_name}</h3>
+                    <p>📅 ${new Date(event.date).toLocaleDateString('sv-SE')}</p>
+                    <div class="photo-grid">
+                        ${event.photos.map(photo => `
+                            <div class="photo-item" onclick="showPhoto(${photo.id})">
+                                <div class="photo-placeholder">
+                                    📷<br>
+                                    <small>${photo.caption}</small>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showPhoto(photoId) {
+            userSystem.showNotification('Fotot öppnas... (demo funktionalitet)');
+        }
+
+        function loadUserProfile() {
+            const profileContent = document.getElementById('profile-content');
+
+            if (!userSystem.isLoggedIn()) {
+                profileContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="material-icons">account_circle</div>
+                        <h3>Profil</h3>
+                        <p>Logga in för att se din profil</p>
+                        <button onclick="showLoginForm()" class="book-btn" style="margin-top: 20px;">
+                            Logga in
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const user = userSystem.getCurrentUser();
+            const bookings = userSystem.getUserBookings();
+
+            profileContent.innerHTML = `
+                <div class="service-card">
+                    <h2>👋 Hej ${user.name}!</h2>
+                    <p><strong>E-post:</strong> ${user.email}</p>
+                    <p><strong>Telefon:</strong> ${user.phone}</p>
+                    <p><strong>Medlem sedan:</strong> ${new Date(user.registeredAt).toLocaleDateString('sv-SE')}</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>📊 Statistik</h3>
+                    <p><strong>Totala bokningar:</strong> ${bookings.length}</p>
+                    <p><strong>Aktiva bokningar:</strong> ${bookings.filter(b => new Date(b.eventDateTime) > new Date()).length}</p>
+                    <p><strong>Genomförda:</strong> ${bookings.filter(b => new Date(b.eventDateTime) < new Date()).length}</p>
+                </div>
+
+                <button onclick="userSystem.logoutUser()" class="book-btn" style="background: #666; margin-top: 20px;">
+                    Logga ut
+                </button>
+            `;
+        }
+
+        function updateUserInterface() {
+            if (userSystem.isLoggedIn()) {
+                // Update interface for logged in user
+                if (currentTab === 'bookings') {
+                    loadUserBookings();
+                } else if (currentTab === 'photos') {
+                    loadUserPhotos();
+                } else if (currentTab === 'profile') {
+                    loadUserProfile();
+                }
+            }
+        }
+
+        // Auto-update countdowns every minute
+        setInterval(() => {
+            if (currentTab === 'bookings' && userSystem.isLoggedIn()) {
+                loadUserBookings();
+            }
+        }, 60000);
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

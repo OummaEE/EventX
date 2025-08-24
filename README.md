@@ -1,142 +1,136 @@
 # 🎯 EventX Escape Room PWA
 
-> Progressive Web App для бронирования escape room услуг от EventX
+> Fullständig Progressive Web App för bokning av EventX escape room upplevelser
 
 [![PWA](https://img.shields.io/badge/PWA-enabled-brightgreen.svg)](https://web.dev/progressive-web-apps/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-deployed-blue.svg)](https://username.github.io/eventx-escape-room-pwa)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-ready-blue.svg)](#)
 
 ## 🚀 Live Demo
 
-**🔗 Попробуйте приложение:** https://username.github.io/eventx-escape-room-pwa
+**🔗 Demo applikation:** [https://cfueyyby.gensparkspace.com/](https://cfueyyby.gensparkspace.com/)
 
-## 📱 Возможности
+## 📱 Funktioner
 
-### 🎪 Основные функции:
-- ✅ **Система бронирования** - QuestBox, QuestGames, QuestHouse
-- ✅ **Двуязычность** - шведский и английский
-- ✅ **PWA установка** - работает как нативное приложение
-- ✅ **Offline режим** - функциональность без интернета
+### 🎪 Huvudfunktioner:
+- ✅ **Komplett bokningssystem** - QuestBox, QuestGames, QuestHouse
+- ✅ **Användarregistrering** - säkert inloggsystem med localStorage
+- ✅ **E-postmeddelanden** - automatiska bekräftelser till admin och kund
+- ✅ **Personlig profil** - aktiva bokningar med nedräkning
+- ✅ **Fotogalleri** - bilder från tidigare evenemang
+- ✅ **Nyhetsflöde** - EventX nyheter och erbjudanden
+- ✅ **Tvåspråkighet** - svenska och engelska
+- ✅ **PWA-installation** - fungerar som native app
 
-### 👤 Пользовательский кабинет:
-- ✅ **Регистрация/авторизация** пользователей
-- ✅ **Активные бронирования** с обратным отсчетом
-- ✅ **История посещений** с фотографиями
-- ✅ **Email уведомления** администратору и клиенту
+### 📱 Navigation (5 tabs):
+- 🏠 **Hem** - tjänstebokning och information
+- 📅 **Mina bokningar** - personlig översikt med nedräkning
+- 📰 **Nyheter** - EventX nyheter och kampanjer
+- 📸 **Mina foton** - galleri från evenemang
+- 👤 **Profil** - användarinställningar
 
-### 📱 Интерфейс:
-- ✅ **Bottom Navigation** - 5 основных разделов
-- ✅ **Material Design** - нативный вид приложения
-- ✅ **Адаптивный дизайн** - все устройства
-- ✅ **Push уведомления** - напоминания и новости
+## ⚡ Installation & Användning
 
-## 🛠️ Технологии
-
-- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-- **PWA:** Service Worker, Web App Manifest
-- **Email:** EmailJS для уведомлений
-- **Storage:** LocalStorage для данных пользователей
-- **Icons:** Material Design Icons
-- **Hosting:** GitHub Pages ready
-
-## ⚡ Быстрый старт
-
-### 1. Клонирование:
+### 1. GitHub Repository:
 ```bash
 git clone https://github.com/USERNAME/eventx-escape-room-pwa.git
 cd eventx-escape-room-pwa
 ```
 
-### 2. Локальный запуск:
+### 2. Lokal utveckling:
 ```bash
-# Python
+# Med Python
 python -m http.server 8000
 
-# Node.js (если установлен)
+# Med Node.js
 npm start
 
-# Откройте: http://localhost:8000
+# Öppna: http://localhost:8000
 ```
 
-### 3. GitHub Pages:
-1. Settings → Pages → Deploy from branch: main
-2. Приложение будет доступно: `https://USERNAME.github.io/eventx-escape-room-pwa`
+### 3. GitHub Pages Deploy:
+1. **Repository Settings** → **Pages**
+2. **Source:** Deploy from branch: `main`
+3. **Folder:** `/ (root)`
+4. **Save**
 
-## 📧 Настройка Email
+## 📧 E-post konfiguration
 
-1. **Зарегистрируйтесь на [EmailJS](https://www.emailjs.com/)**
-2. **Следуйте инструкции:** [EMAIL_SETUP.md](EMAIL_SETUP.md)
-3. **Обновите настройки в:** `js/email-service.js`
+### Snabbkonfiguration:
+1. **Registrera på EmailJS** (gratis 200 e-post/månad)
+2. **Skapa Email Service** (Gmail/Outlook)
+3. **Uppdatera js/email-service.js:**
 
-## 🧪 Тестирование
+```javascript
+// DINA EMAILJS INSTÄLLNINGAR:
+const SERVICE_ID = 'din_service_id';
+const ADMIN_TEMPLATE_ID = 'admin_template_id'; 
+const PUBLIC_KEY = 'din_public_key';
 
-### Demo пользователи:
-- **Email:** `anna@example.com` | **Password:** `demo123`
-- **Email:** `erik@example.com` | **Password:** `demo123`  
-- **Email:** `sofia@example.com` | **Password:** `demo123`
+// ADMIN E-POST (hit kommer bokningar):
+const ADMIN_EMAIL = 'info@eventx.nu';
+```
 
-**Подробнее:** [DEMO_USERS.md](DEMO_USERS.md)
+## 🧪 Testning
 
-## 📱 Установка PWA
+### Demo-användare (redan skapade):
+- **E-post:** `anna@example.com` | **Lösenord:** `demo123`
+- **E-post:** `erik@example.com` | **Lösenord:** `demo123`
+- **E-post:** `sofia@example.com` | **Lösenord:** `demo123`
+
+## 📱 PWA Installation
 
 ### Android:
-1. Откройте в Chrome
-2. Нажмите "Добавить на главный экран"
+1. Öppna i Chrome
+2. Tryck "Lägg till på startskärmen" banner
 
 ### iOS:
-1. Откройте в Safari  
-2. Поделиться → "На экран 'Домой'"
+1. Öppna i Safari
+2. Dela-knappen → "Lägg till på hemskärmen"
 
-### Desktop:
-1. Иконка установки в адресной строке
-2. Или кнопка "Installera appen" в приложении
-
-## 📂 Структура проекта
+## 📂 Projektstruktur
 
 ```
 eventx-escape-room-pwa/
-├── index.html              # Главная страница приложения
-├── manifest.json           # PWA манифест
-├── service-worker.js       # Service Worker для offline
+├── index.html                 # Huvudapplikation
+├── manifest.json              # PWA manifest
+├── service-worker.js          # Offline funktionalitet
 ├── js/
-│   ├── user-system.js      # Система пользователей
-│   ├── email-service.js    # EmailJS интеграция
-│   └── app-data.js         # Демо данные
-├── icons/                  # Иконки PWA (все размеры)
-├── README.md              # Эта документация
-├── EMAIL_SETUP.md         # Настройка email
-├── DEMO_USERS.md          # Тестовые пользователи
-└── DEPLOYMENT.md          # Инструкция по развертыванию
+│   ├── user-system.js         # Användarsystem & autentisering
+│   ├── email-service.js       # EmailJS integration
+│   └── app-data.js           # Demo data (nyheter, foton)
+├── icons/                     # PWA ikoner (alla storlekar)
+├── .gitignore                # Git konfiguration
+├── package.json              # Projekt metadata
+└── README.md                 # Denna dokumentation
 ```
 
-## 🔧 Кастомизация
+## 🤝 Support
 
-### Брендинг:
-- **Логотип:** замените в `icons/`
-- **Цвета:** обновите CSS переменные
-- **Контакты:** измените в `js/app-data.js`
+- **EventX Webb:** [https://eventx.nu/](https://eventx.nu/)
+- **E-post:** info@eventx.nu
+- **Telefon:** 073 521 40 77
 
-### Услуги:
-- **Добавьте новые:** в массиве services
-- **Цены:** обновите в данных услуг
-- **Описания:** переведите на нужные языки
+## 📄 Licens
 
-## 📈 Мониторинг
-
-- 🔍 **Lighthouse audit** - PWA проверка
-- 📊 **Google Analytics** - аналитика использования
-- 📧 **EmailJS dashboard** - статистика уведомлений
-
-## 🤝 Контакты
-
-- **EventX:** https://eventx.nu/
-- **Email:** info@eventx.nu
-- **Телефон:** 073 521 40 77
-
-## 📄 Лицензия
-
-MIT License - можете использовать и модифицировать для своих проектов.
+MIT License - Fri att använda och modifiera för egna projekt.
 
 ---
 
-**Создано для EventX** 🎪 *Vi skapar upplevelser som engagerar, utvecklar och förflyttar*
+**Utvecklad för EventX** 🎪  
+*Vi skapar upplevelser som engagerar, utvecklar och förflyttar*
+
+### Funktionalitet Overview:
+
+✅ **Komplett bokningssystem** med e-postbekräftelser  
+✅ **Användarsystem** med registrering och inloggning  
+✅ **Personlig profil** med aktiva bokningar och nedräkning  
+✅ **Fotogalleri** från tidigare evenemang  
+✅ **Nyhetsflöde** med EventX uppdateringar  
+✅ **PWA funktionalitet** - installeras som native app  
+✅ **Offline support** - fungerar utan internetuppkoppling  
+✅ **Responsive design** - alla enheter och skärmstorlekar  
+✅ **Tvåspråkig** - svenska och engelska  
+✅ **GitHub Pages ready** - redo för deploy  
+
+**Detta är en komplett, produktionsklar applikation!** 🚀

@@ -14,20 +14,20 @@
     <meta name="mobile-web-app-capable" content="yes">
 
     <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-    <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
-    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#3b82f6">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
+    <link rel="apple-touch-icon" href="icons/icon-180x180.png">
+    <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#3b82f6">
 
     <!-- Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 
     <!-- Apple Pay Domain Validation -->
     <meta name="apple-pay-domain-validation" content="merchant.com.eventx.booking">
@@ -566,10 +566,10 @@
     </div>
 
     <!-- JavaScript Modules -->
-    <script src="/js/push-notifications.js"></script>
-    <script src="/js/apple-wallet.js"></script>
-    <script src="/js/apple-pay.js"></script>
-    <script src="/js/offline-manager.js"></script>
+    <script src="js/push-notifications.js"></script>
+    <script src="js/apple-wallet.js"></script>
+    <script src="js/apple-pay.js"></script>
+    <script src="js/offline-manager.js"></script>
 
     <!-- Main Application JavaScript -->
     <script>
@@ -623,7 +623,7 @@
             // Register service worker
             if ('serviceWorker' in navigator) {
                 try {
-                    const registration = await navigator.serviceWorker.register('/service-worker.js');
+                    const registration = await navigator.serviceWorker.register('service-worker.js');
                     console.log('SW registered:', registration);
 
                     // Handle updates
